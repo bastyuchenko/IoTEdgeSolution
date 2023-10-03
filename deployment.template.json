@@ -85,7 +85,7 @@
         "schemaVersion": "1.1",
         "routes": {
           "filtermoduleToIoTHub": "FROM /messages/modules/filtermodule/outputs/* INTO $upstream",
-          "sensorTofiltermodule": "FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/filtermodule/inputs/inputFromSensor\")"
+          "sensorTofiltermodule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/filtermodule/inputs/inputFromSensor\")"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
