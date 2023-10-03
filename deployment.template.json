@@ -57,13 +57,23 @@
           }
         },
         "modules": {
-          "SampleModule": {
+          "filtermodule": {
             "version": "1.0",
             "type": "docker",
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.SampleModule}",
+              "image": "${MODULES.filtermodule}",
+              "createOptions": {}
+            }
+          },
+          "SimulatedTemperatureSensor": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.4",
               "createOptions": {}
             }
           }
@@ -74,11 +84,17 @@
       "properties.desired": {
         "schemaVersion": "1.1",
         "routes": {
-          "SampleModuleToIoTHub": "FROM /messages/modules/SampleModule/outputs/* INTO $upstream"
+          "filtermoduleToIoTHub": "FROM /messages/modules/filtermodule/outputs/* INTO $upstream",
+          "sensorTofiltermodule": "FROM /messages/modules/tempSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/filtermodule/inputs/inputFromSensor\")"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
         }
+      }
+    },
+    "filtermodule": {
+      "properties.desired": {
+        "TemperatureThreshold": 25
       }
     }
   }

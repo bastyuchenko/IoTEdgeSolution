@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "SampleModule Remote Debug (.NET Core)",
+      "name": "filtermodule Remote Debug (.NET Core)",
       "type": "coreclr",
       "request": "attach",
       "processId": "${command:pickRemoteProcess}",
@@ -11,7 +11,7 @@
         "pipeArgs": [
           "exec",
           "-i",
-          "SampleModule",
+          "filtermodule",
           "sh",
           "-c"
         ],
@@ -20,17 +20,17 @@
         "quoteArgs": true
       },
       "sourceFileMap": {
-        "/app": "${workspaceFolder}/modules/SampleModule"
+        "/app": "${workspaceFolder}/modules/filtermodule"
       },
       "justMyCode": true
     },
     {
-      "name": "SampleModule Local Debug (.NET Core)",
+      "name": "filtermodule Local Debug (.NET Core)",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceRoot}/modules/SampleModule/bin/Debug/net6.0/SampleModule.dll",
+      "program": "${workspaceRoot}/modules/filtermodule/bin/Debug/net6.0/filtermodule.dll",
       "args": [],
-      "cwd": "${workspaceRoot}/modules/SampleModule",
+      "cwd": "${workspaceRoot}/modules/filtermodule",
       "internalConsoleOptions": "openOnSessionStart",
       "stopAtEntry": false,
       "console": "internalConsole",
