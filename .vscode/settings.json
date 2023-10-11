@@ -2,5 +2,11 @@
     "azure-iot-edge.defaultPlatform": {
         "platform": "arm32v7",
         "alias": null
-    }
+    },
+    "azureFunctions.projectSubpath": "modules\\CSharpFunction",
+    "azureFunctions.deploySubpath": "modules\\CSharpFunction/bin/Release/netstandard2.0/publish",
+    "azureFunctions.projectLanguage": "C#",
+    "azureFunctions.projectRuntime": "~4",
+    "debug.internalConsoleOptions": "neverOpen",
+    "azureFunctions.preDeployTask": "publish (functions)"
 }
