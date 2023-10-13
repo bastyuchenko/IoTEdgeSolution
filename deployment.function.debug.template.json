@@ -73,7 +73,7 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "${MODULES.CSharpFunction}",
+              "image": "${MODULES.CSharpFunction.debug}",
               "createOptions": {}
             }
           }
@@ -84,8 +84,8 @@
       "properties.desired": {
         "schemaVersion": "1.1",
         "routes": {
-          "azfunction": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/CSharpFunction/inputs/inputFromSensor\")",
-          "CSharpFunctionToIoTHub": "FROM /messages/modules/CSharpFunction/outputs/* INTO $upstream"
+          "sensorToFunction": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/CSharpFunction/inputs/inputFromSensor\")",
+          "functionToCloud": "FROM /messages/modules/CSharpFunction/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200

@@ -1,0 +1,121 @@
+{
+  "$schema-template": "4.0.0",
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired": {
+        "schemaVersion": "1.1",
+        "runtime": {
+          "type": "docker",
+          "settings": {
+            "minDockerVersion": "v1.25",
+            "loggingOptions": "",
+            "registryCredentials": {
+              "acr4anton": {
+                "username": "$CONTAINER_REGISTRY_USERNAME_acr4anton",
+                "password": "$CONTAINER_REGISTRY_PASSWORD_acr4anton",
+                "address": "acr4anton.azurecr.io"
+              }
+            }
+          }
+        },
+        "systemModules": {
+          "edgeAgent": {
+            "type": "docker",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-agent:1.4",
+              "createOptions": {}
+            }
+          },
+          "edgeHub": {
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-hub:1.4",
+              "createOptions": {
+                "HostConfig": {
+                  "PortBindings": {
+                    "5671/tcp": [
+                      {
+                        "HostPort": "5671"
+                      }
+                    ],
+                    "8883/tcp": [
+                      {
+                        "HostPort": "8883"
+                      }
+                    ],
+                    "443/tcp": [
+                      {
+                        "HostPort": "443"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modules": {
+          "SimulatedTemperatureSensor": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.4",
+              "createOptions": {}
+            }
+          },
+          "iotedgestreamanalytics": {
+            "env": {
+              "PlanId": {
+                "value": "stream-analytics-on-iot-edge"
+              }
+            },
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azure-stream-analytics/azureiotedge:1.0.11"
+            },
+            "status": "running",
+            "type": "docker",
+            "version": "1.0.0.0"
+          }
+        }
+      }
+    },
+    "$edgeHub": {
+      "properties.desired": {
+        "schemaVersion": "1.1",
+        "routes": {
+          "telemetryToCloud": {
+            "route": "FROM /messages/modules/SimulatedTemperatureSensor/* INTO $upstream"
+          },
+          "alertsToCloud": {
+            "route": "FROM /messages/modules/{moduleName}/* INTO $upstream"
+          },
+          "alertsToReset": {
+            "route": "FROM /messages/modules/{moduleName}/* INTO BrokeredEndpoint(\"/modules/SimulatedTemperatureSensor/inputs/control\")"
+          },
+          "telemetryToAsa": {
+            "route": "FROM /messages/modules/SimulatedTemperatureSensor/* INTO BrokeredEndpoint(\"/modules/{moduleName}/inputs/temperature\")"
+          }
+        },
+        "storeAndForwardConfiguration": {
+          "timeToLiveSecs": 7200
+        }
+      }
+    },
+    "SimulatedTemperatureSensor": {
+      "properties.desired": {}
+    },
+    "iotedgestreamanalytics": {
+      "properties.desired": {
+        "ASAJobInfo": "$ASAJOBINFO_iot4edge4analytics",
+        "ASAJobResourceId": "$ASAJOBRESOURCEID_iot4edge4analytics",
+        "ASAJobEtag": "c82622bc-1087-4496-b8d6-bc56f53d2eb9",
+        "PublishTimestamp": "10/13/2023 2:58:21 AM"
+      }
+    }
+  }
+}
