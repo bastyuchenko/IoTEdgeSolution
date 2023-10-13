@@ -92,13 +92,13 @@
             "route": "FROM /messages/modules/SimulatedTemperatureSensor/* INTO $upstream"
           },
           "alertsToCloud": {
-            "route": "FROM /messages/modules/{moduleName}/* INTO $upstream"
+            "route": "FROM /messages/modules/iotedgestreamanalytics/* INTO $upstream"
           },
           "alertsToReset": {
-            "route": "FROM /messages/modules/{moduleName}/* INTO BrokeredEndpoint(\"/modules/SimulatedTemperatureSensor/inputs/control\")"
+            "route": "FROM /messages/modules/iotedgestreamanalytics/* INTO BrokeredEndpoint(\"/modules/SimulatedTemperatureSensor/inputs/control\")"
           },
           "telemetryToAsa": {
-            "route": "FROM /messages/modules/SimulatedTemperatureSensor/* INTO BrokeredEndpoint(\"/modules/{moduleName}/inputs/temperature\")"
+            "route": "FROM /messages/modules/SimulatedTemperatureSensor/* INTO BrokeredEndpoint(\"/modules/iotedgestreamanalytics/inputs/temperature\")"
           }
         },
         "storeAndForwardConfiguration": {
