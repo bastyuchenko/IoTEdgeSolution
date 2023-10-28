@@ -1,0 +1,109 @@
+{
+  "$schema-template": "4.0.0",
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired": {
+        "schemaVersion": "1.1",
+        "runtime": {
+          "type": "docker",
+          "settings": {
+            "minDockerVersion": "v1.25",
+            "loggingOptions": "",
+            "registryCredentials": {
+              "acr4anton": {
+                "username": "$CONTAINER_REGISTRY_USERNAME_acr4anton",
+                "password": "$CONTAINER_REGISTRY_PASSWORD_acr4anton",
+                "address": "acr4anton.azurecr.io"
+              }
+            }
+          }
+        },
+        "systemModules": {
+          "edgeAgent": {
+            "type": "docker",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-agent:1.4",
+              "createOptions": {}
+            }
+          },
+          "edgeHub": {
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-hub:1.4",
+              "createOptions": {
+                "HostConfig": {
+                  "PortBindings": {
+                    "5671/tcp": [
+                      {
+                        "HostPort": "5671"
+                      }
+                    ],
+                    "8883/tcp": [
+                      {
+                        "HostPort": "8883"
+                      }
+                    ],
+                    "443/tcp": [
+                      {
+                        "HostPort": "443"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modules": {
+          "SQLite": {
+            "env": {},
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge/sqlite:1.0",
+              "createOptions": "{\"HostConfig\":{\"Binds\":[\"/app/db:/app/db\"]}}"
+        },
+        "status": "running",
+        "type": "docker"
+      }
+    }
+  }
+},
+"$edgeHub": {
+  "properties.desired": {
+    "schemaVersion": "1.1",
+    "routes": {
+      "SQLiteToIoTHub": "FROM /messages/modules/SQLite/outputs/* INTO $upstream"
+    },
+    "storeAndForwardConfiguration": {
+      "timeToLiveSecs": 7200
+    }
+  }
+},
+"SQLite": {
+  "properties.desired": {
+    "SQLiteConfigs": {
+      "Db01": {
+        "DbPath": "/app/db/test.db",
+        "Table01": {
+          "TableName": "test",
+          "Column01": {
+            "ColumnName": "Id",
+            "Type": "numeric",
+            "IsKey": "true",
+            "NotNull": "true"
+          },
+          "Column02": {
+            "ColumnName": "Value",
+            "Type": "numeric",
+            "IsKey": "false",
+            "NotNull": "true"
+          }
+        }
+      }
+    }
+  }
+}
+}
+}
