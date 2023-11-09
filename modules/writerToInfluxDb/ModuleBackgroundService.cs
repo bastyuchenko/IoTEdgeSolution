@@ -1,9 +1,10 @@
 ﻿using Microsoft.Azure.Devices.Client;
 using Microsoft.Azure.Devices.Client.Transport.Mqtt;
 using System.Text;
-using System.Collections.Generic;     // For KeyValuePair<>
 using Microsoft.Azure.Devices.Shared; // For TwinCollection
-using Newtonsoft.Json;                // For JsonConvert
+using Newtonsoft.Json;
+using InfluxDB.Collector;
+using InfluxDB.Collector.Diagnostics;
 
 namespace writerToInfluxDb;
 
@@ -20,6 +21,17 @@ internal class ModuleBackgroundService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         _cancellationToken = cancellationToken;
+
+        Metrics.Collector = new CollectorConfiguration()
+                    .Batch.AtInterval(TimeSpan.FromSeconds(2))
+                    .WriteTo.InfluxDB("http://192.168.1.128:8086", "alerts")
+                            .CreateCollector();
+
+        CollectorLog.RegisterErrorHandler((message, exception) =>
+        {
+            _logger.LogError($"{message}: {exception}");
+        });
+
         MqttTransportSettings mqttSetting = new(TransportType.Mqtt_Tcp_Only);
         ITransportSettings[] settings = { mqttSetting };
 
@@ -86,6 +98,21 @@ internal class ModuleBackgroundService : BackgroundService
             {
                 Console.WriteLine($"Machine temperature {messageBody.machine.temperature} " +
                     $"exceeds threshold {temperatureThreshold}");
+
+                Metrics.Measure("temperature",
+                                    messageBody.machine.temperature,
+                                    new Dictionary<string, string> {
+                                              { "area", "machine" },
+                                              { "source", "SimulatedTemperatureSensor" } });
+
+                Metrics.Measure("temperature",
+                                    messageBody.ambient.temperature,
+                                    new Dictionary<string, string> {
+                                              { "area", "ambient" },
+                                              { "source", "SimulatedTemperatureSensor" } });
+
+                System.Console.WriteLine("Alert saved in InfluxDB, alert database");
+
                 using (var filteredMessage = new Message(messageBytes))
                 {
                     foreach (KeyValuePair<string, string> prop in message.Properties)

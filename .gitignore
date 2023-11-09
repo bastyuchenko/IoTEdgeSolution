@@ -3,3 +3,4 @@ config/
 appsettings.Development.json
 bin
 obj
+.vs

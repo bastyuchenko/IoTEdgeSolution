@@ -77,7 +77,7 @@
             }
           },
           "writerToInfluxDb": {
-            "version": "1.0",
+            "version": "1.1",
             "type": "docker",
             "status": "running",
             "restartPolicy": "always",
@@ -93,7 +93,7 @@
       "properties.desired": {
         "schemaVersion": "1.1",
         "routes": {
-          "sensorTowritermodule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/writerToInfluxDb/inputs/writerToInfluxDb\")",
+          "sensorTowritermodule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/writerToInfluxDb/inputs/inputFromSensor\")",
           "writermoduleToIoTHub": "FROM /messages/modules/writerToInfluxDb/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
